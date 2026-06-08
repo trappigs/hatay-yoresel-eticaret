@@ -5,3 +5,7 @@ backend/
 docs/
 .playwright-mcp/
 *.log
+
+# never upload local env (Vercel uses dashboard env vars)
+.env
+.env*.local

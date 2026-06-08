@@ -37,3 +37,5 @@ next-env.d.ts
 # test / tooling artifacts
 .playwright-mcp/
 *.log
+
+.vercel
