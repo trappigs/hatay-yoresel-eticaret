@@ -1,0 +1,7 @@
+# The Medusa backend is deployed separately (VPS/Railway/Render), not on Vercel.
+backend/
+
+# Local-only
+docs/
+.playwright-mcp/
+*.log

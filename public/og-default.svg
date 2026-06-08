@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#FBF6EC"/>
+  <rect width="1200" height="630" fill="url(#g)" opacity="0.5"/>
+  <circle cx="600" cy="232" r="74" fill="#5E6B33"/>
+  <path d="M567 262c-12-12-12-34 0-46 12-12 46-12 60-14-2 14-2 48-14 60-12 12-34 12-46 0z" fill="#FBF6EC"/>
+  <text x="600" y="392" text-anchor="middle" font-family="Georgia, serif" font-size="72" font-weight="700" fill="#241E16">Hatay Yöresel Ürünler</text>
+  <text x="600" y="452" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" fill="#A6321E" letter-spacing="6">HATAY'DAN SOFRANIZA</text>
+  <text x="600" y="520" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#6B6152">Salça · Zeytinyağı · Nar Ekşisi · Baharat · Reçel</text>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4ECDB"/>
+      <stop offset="1" stop-color="#FBF6EC"/>
+    </linearGradient>
+  </defs>
+</svg>

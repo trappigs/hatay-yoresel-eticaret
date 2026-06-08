@@ -1,0 +1,30 @@
+# Caddy reverse proxy for the Medusa backend (auto HTTPS via Let's Encrypt).
+# Copy to /etc/caddy/Caddyfile on the VPS, replace api.example.com, then:
+#   sudo systemctl reload caddy
+#
+# Medusa serves both the Store/Admin API and the Admin UI (/app) on :9000.
+
+api.example.com {
+    encode gzip zstd
+
+    # Large product images / uploads
+    request_body {
+        max_size 25MB
+    }
+
+    reverse_proxy 127.0.0.1:9000
+}
+
+# --- Nginx equivalent (if you prefer Nginx + certbot) ---
+# server {
+#   server_name api.example.com;
+#   client_max_body_size 25M;
+#   location / {
+#     proxy_pass http://127.0.0.1:9000;
+#     proxy_set_header Host $host;
+#     proxy_set_header X-Real-IP $remote_addr;
+#     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#     proxy_set_header X-Forwarded-Proto $scheme;
+#   }
+#   listen 443 ssl;        # certbot fills the ssl_* lines
+# }

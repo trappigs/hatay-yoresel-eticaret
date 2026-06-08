@@ -1,0 +1,32 @@
+# Local PostgreSQL (+ Redis) for the Medusa backend.
+# Usage:  docker compose up -d
+# DATABASE_URL=postgres://medusa:medusa@localhost:5432/medusa
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: hatay-medusa-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: medusa
+      POSTGRES_PASSWORD: medusa
+      POSTGRES_DB: medusa
+    ports:
+      - "5432:5432"
+    volumes:
+      - hatay-medusa-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medusa"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Optional. Without Redis, Medusa uses in-memory modules (fine for local dev).
+  redis:
+    image: redis:7-alpine
+    container_name: hatay-medusa-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+volumes:
+  hatay-medusa-db:
