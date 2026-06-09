@@ -1,0 +1,14 @@
+node_modules
+.medusa
+dist
+build
+.env
+.env.*
+!.env.template
+!.env.production.example
+*.log
+.git
+.DS_Store
+coverage
+.cache
+uploads

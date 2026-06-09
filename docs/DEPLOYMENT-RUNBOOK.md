@@ -99,6 +99,73 @@ You'll paste it into Vercel.
 
 ---
 
+## Backend on Railway (managed — easiest path)
+
+Railway gives managed Postgres + Redis and deploys the backend straight from the
+GitHub repo. No VPS / Caddy needed.
+
+### R1. Project + databases
+1. railway.app → **New Project** → **Deploy from GitHub repo** → pick
+   `trappigs/hatay-yoresel-eticaret`.
+2. Open the created service → **Settings → Root Directory = `backend`**
+   (critical — otherwise Railway builds the Next storefront, not Medusa).
+3. **+ Create → Database → PostgreSQL**. Again: **Redis**.
+
+### R2. Build & start (service → Settings → Deploy)
+Medusa v2 builds into `.medusa/server` and starts from there:
+- **Build Command:** `npm install && npm run build`
+- **Start Command:**
+  `cd .medusa/server && npm install && npx medusa db:migrate && npx medusa start`
+- Node: Medusa wants 20/22. If a newer Node breaks the build, add a variable
+  `NIXPACKS_NODE_VERSION=20`.
+- Railway sets `PORT`; Medusa binds it automatically.
+
+### R3. Variables (service → Variables) — use Railway references for DB/Redis
+| Var | Value |
+|---|---|
+| `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` |
+| `REDIS_URL` | `${{Redis.REDIS_URL}}` |
+| `JWT_SECRET` | `openssl rand -base64 32` |
+| `COOKIE_SECRET` | `openssl rand -base64 32` |
+| `STORE_CORS` | your Vercel URL, e.g. `https://eticaret2-ivory.vercel.app` |
+| `ADMIN_CORS` | the Railway URL from R4, e.g. `https://<svc>.up.railway.app` |
+| `AUTH_CORS` | both, comma-separated |
+| `MEDUSA_BACKEND_URL` | the Railway URL from R4 |
+| `NODE_ENV` | `production` |
+
+### R4. Public domain
+Service → **Settings → Networking → Generate Domain** → `https://<svc>.up.railway.app`.
+Paste it into `MEDUSA_BACKEND_URL` + `ADMIN_CORS` (R3) and redeploy. (Add a custom
+`api.<domain>` later in the same tab.)
+
+### R5. Admin user (Railway CLI from your machine)
+```bash
+npm i -g @railway/cli
+railway login
+railway link                       # pick the project + backend service
+railway run npx medusa user -e admin@<domain> -p 'STRONG_PASSWORD'
+```
+`railway run` injects the service env so it reaches Railway's Postgres.
+
+### R6. Publishable key
+`https://<svc>.up.railway.app/app` → **Settings → API Key Management → Publishable
+Keys** → copy `pk_...`.
+
+### R7. Point the storefront (Vercel) at the Railway backend
+```bash
+vercel env add COMMERCE_ADAPTER production            # value: medusa
+vercel env add MEDUSA_BACKEND_URL production          # https://<svc>.up.railway.app
+vercel env add NEXT_PUBLIC_MEDUSA_BACKEND_URL production  # same URL
+vercel env add MEDUSA_PUBLISHABLE_KEY production       # pk_...
+vercel env add NEXT_PUBLIC_SITE_URL production         # your live storefront URL
+vercel deploy --prod --scope trappigs-projects
+```
+Make sure the backend `STORE_CORS` contains the exact Vercel URL.
+
+> ⚠️ **Seed warning:** the first `db:migrate` loads the **12 sample products**.
+> Replace them in **Admin → Products** before taking real orders. Re-deploys won't
+> duplicate (idempotency guard). Never run `npm run seed` manually in production.
+
 ## Part B — DNS
 
 | Record | Host | Value |
